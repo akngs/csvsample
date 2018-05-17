@@ -1,0 +1,16 @@
+# Project specifics
+deploy.sh
+
+# Python
+.pytest_cache/
+.venv/
+build/
+dist/
+*.egg-info/
+*.py[co]
+
+# IDEs
+.idea/
+
+# OS
+.DS_Store

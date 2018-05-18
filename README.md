@@ -13,10 +13,19 @@
     for reproducibility.
 
 
+### Install
+
+You can install ``csvsample`` via ``pip``:
+
+   pip install csvsample
+
+
 ### API
 
 ``csvsample.random_sample(lines, sample_rate, seed=None)`` performs random
 sampling using pseudo random number generator:
+
+    from csvsample import csvsample
 
     with open('input.csv', 'r') as i:
         with open('output.csv', 'w') as o:

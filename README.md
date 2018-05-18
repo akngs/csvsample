@@ -13,17 +13,37 @@
     for reproducibility.
 
 
-### Sampling methods
+### API
 
-*   ``csvsample.random_sample()`` performs random sampling using pseudo random
-    number generator.
-*   ``csvsample.hash_sample()`` performs hash-based sampling using
-    extremely-fast hash function (xxhash)
-*   ``csvsample.reservoir_sample()`` performs
-    [reservoir sampling](https://en.wikipedia.org/wiki/Reservoir_sampling).
-    It works by randomly choosing a sample of ``sample_size`` items from a list
-    or a generator ``lines`` containing ``n`` items, where ``n`` is either a
-    very large or unknown number.
+``csvsample.random_sample(lines, sample_rate, seed=None)`` performs random
+sampling using pseudo random number generator:
+
+    with open('input.csv', 'r') as i:
+        with open('output.csv', 'w') as o:
+            o.writelines(csvsample.random_sample(i, 0.1))
+
+``csvsample.hash_sample(lines, sample_rate, column_name, seed=None)`` performs
+hash-based sampling using extremely-fast hash function.
+
+Let's say that instead of saving all users' log, you want to randomly select
+10% of users and only save logs of those selected users. Simple random sampling
+won't work. You can use hash-based sampling. "Consistent" nature of the
+algorithm guarantees that any user ID selected once will always be selected
+again:
+
+    sample = csvsample.hash_sample(lines, 0.1, 'user_id')
+
+``csvsample.reservoir_sample(line, sample_size, seed=None)`` performs reservoir
+sampling. Let's say that you have an URL of 100GB csv file. Since you don't
+have enough disk space, you just want to save small portion of sample which is
+representative and unbiased.
+
+[reservoir sampling](https://en.wikipedia.org/wiki/Reservoir_sampling) method
+allows you to acquire random sample without saving entire data first:
+
+    sample = csvsample.reservoir_sample(lines, 1000)
+
+Now ``sample`` variable contains exactly 1,000 randomly selected lines.
 
 
 ### Command-line interface

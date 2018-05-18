@@ -1,9 +1,10 @@
+import csv
 import itertools
 import random
+from io import StringIO
 from sys import stdin
 
 import xxhash
-import csv
 
 
 class CLI:
@@ -18,6 +19,14 @@ class CLI:
     @staticmethod
     def reservoir(sample_size, seed=None):
         yield from reservoir_sample(stdin, sample_size, seed)
+
+
+def to_buf(sample):
+    """Turn sampled generator into io.StringIO"""
+    buf = StringIO()
+    buf.writelines(l + '\n' for l in sample)
+    buf.seek(0)
+    return buf
 
 
 def random_sample(lines, sample_rate, seed=None):

@@ -25,7 +25,7 @@ You can install ``csvsample`` via ``pip``:
 ``csvsample.random_sample(lines, sample_rate, seed=None)`` performs random
 sampling using pseudo random number generator:
 
-    from csvsample import csvsample
+    import csvsample
 
     with open('input.csv', 'r') as i:
         with open('output.csv', 'w') as o:

@@ -1,7 +1,7 @@
 import fire
 
-from . import csvsample
+from .csvsample import CLI, random_sample, hash_sample, reservoir_sample
 
 
 def main():
-    fire.Fire(csvsample.CLI)
+    fire.Fire(CLI)

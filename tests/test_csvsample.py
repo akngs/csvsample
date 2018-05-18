@@ -1,6 +1,8 @@
+import os
 from collections import Counter
 
-from csvsample.csvsample import random_sample, hash_sample, reservoir_sample
+from csvsample import random_sample, hash_sample, reservoir_sample
+from csvsample.csvsample import to_buf
 
 
 def test_random_sample():
@@ -50,8 +52,8 @@ def test_sampling_rate_zero():
 
 def test_sampling_rate_one():
     src = generate_csv(100000)
-    assert src == list(random_sample(src, 1))
-    assert src == list(hash_sample(src, 1, 'a'))
+    assert src == list(random_sample(src, 1.0))
+    assert src == list(hash_sample(src, 1.0, 'a'))
     assert src == list(reservoir_sample(src, len(src) - 1))
 
 
@@ -65,6 +67,14 @@ def test_seed():
     assert no_seed_a != no_seed_b
     assert seed0_a == seed0_b
     assert seed0_a != seed1
+
+
+def test_to_buf():
+    csv = os.path.join(os.path.dirname(__file__), 'test.csv')
+    with open(csv, 'r') as f:
+        buf = to_buf(hash_sample(f, 0.1, 'start'))
+    expected = 'article_id,start,end,answered,votes,category,title\n'
+    assert expected == buf.readline()
 
 
 def generate_csv(n):

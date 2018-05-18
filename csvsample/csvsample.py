@@ -30,7 +30,7 @@ def random_sample(lines, sample_rate, seed=None):
     :param sample_rate: sampling rate between 0.0 to 1.0
     :param seed: initial seed value for random function (default: random)
     """
-    lines = iter(lines)
+    lines = (l.strip() for l in lines)
 
     # Header
     yield next(lines)
@@ -54,6 +54,7 @@ def hash_sample(lines, sample_rate, colname, seed=None):
     :param colname: name of column to apply hash function
     :param seed: initial seed value for hash function (default: random)
     """
+    lines = (l.strip() for l in lines)
     lines_to_parse, lines_to_return = itertools.tee(lines, 2)
 
     # Header
@@ -84,6 +85,7 @@ def reservoir_sample(lines, sample_size, seed=None):
     :param sample_size: sample size
     :param seed: initial seed value for random function (default: random)
     """
+    lines = (l.strip() for l in lines)
     lines = iter(lines)
 
     # Header

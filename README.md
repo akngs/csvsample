@@ -17,7 +17,7 @@
 
 You can install ``csvsample`` via ``pip``:
 
-   pip install csvsample
+    pip install csvsample
 
 
 ### API

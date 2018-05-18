@@ -30,7 +30,7 @@
 
 ``csvsample`` alos provides command-line interface.
 
-Following URL contains a CSV file from DataHub:
+Following URL contains a CSV file from [DataHub](https://datahub.io/):
 
     > curl -sL https://bit.ly/2ItnHvK | head
     region,year,population

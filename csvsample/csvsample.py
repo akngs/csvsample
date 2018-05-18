@@ -21,6 +21,15 @@ class CLI:
 
 
 def random_sample(lines, sample_rate, seed=None):
+    """Performs random sampling with given `sample_rate`, and returns generator
+    containing sampled CSV.
+
+    Sampling with the same `seed` always yields the same result.
+
+    :param lines: list or generator of CSV rows
+    :param sample_rate: sampling rate between 0.0 to 1.0
+    :param seed: initial seed value for random function (default: random)
+    """
     lines = iter(lines)
 
     # Header
@@ -34,6 +43,17 @@ def random_sample(lines, sample_rate, seed=None):
 
 
 def hash_sample(lines, sample_rate, colname, seed=None):
+    """Performs hash-based sampling with given `sample_rate` by applying a hash
+    function to columns in `colname``, and returns generator containing sampled
+    CSV.
+
+    Sampling with the same `seed` always yields the same result.
+
+    :param lines: list or generator of CSV rows
+    :param sample_rate: sampling rate between 0.0 to 1.0
+    :param colname: name of column to apply hash function
+    :param seed: initial seed value for hash function (default: random)
+    """
     lines_to_parse, lines_to_return = itertools.tee(lines, 2)
 
     # Header
@@ -44,9 +64,9 @@ def hash_sample(lines, sample_rate, colname, seed=None):
 
     # Rows
     if seed is None:
-        xxh = xxhash.xxh64('xxhash')
-    else:
-        xxh = xxhash.xxh64('xxhash', seed=seed)
+        seed = random.randint(0, 0xFFFFFFFFFFFFFFFF)
+    xxh = xxhash.xxh64('xxhash', seed=seed)
+
     for row, line in zip(parsed, lines_to_return):
         xxh.reset()
         xxh.update(row[col_index])
@@ -55,6 +75,15 @@ def hash_sample(lines, sample_rate, colname, seed=None):
 
 
 def reservoir_sample(lines, sample_size, seed=None):
+    """Performs reservoir sampling with given `sample_size`, and returns
+    generator containing sampled CSV.
+
+    Sampling with the same `seed` always yields the same result.
+
+    :param lines: list or generator of CSV rows
+    :param sample_size: sample size
+    :param seed: initial seed value for random function (default: random)
+    """
     lines = iter(lines)
 
     # Header

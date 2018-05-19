@@ -22,17 +22,30 @@ You can install ``csvsample`` via ``pip``:
 
 ### API
 
-``csvsample.random_sample(lines, sample_rate, seed=None)`` performs random
-sampling using pseudo random number generator:
+``csvsample.sample()`` is the main API:
+
+    csvsample.sample(lines, sampling_method, **kwargs)
+
+``lines`` can be any ``iterable`` containing valid CSV rows including header
+row.
+
+``sampling_method`` should be one of followings:
+
+*   ``random``
+*   ``hash``
+*   ``reservoir``
+
+``random`` sampling method performs random sampling using pseudo random number
+generator:
 
     import csvsample
 
     with open('input.csv', 'r') as i:
         with open('output.csv', 'w') as o:
-            o.writelines(csvsample.random_sample(i, 0.1))
+            o.writelines(csvsample.sample(i, 'random', sample_rate=0.1))
 
-``csvsample.hash_sample(lines, sample_rate, column_name, seed=None)`` performs
-hash-based sampling using extremely-fast hash function.
+``hash`` sampling method performs hash-based sampling using extremely-fast hash
+function.
 
 Let's say that instead of saving all users' log, you want to randomly select
 10% of users and only save logs of those selected users. Simple random sampling
@@ -40,24 +53,42 @@ won't work. You can use hash-based sampling. "Consistent" nature of the
 algorithm guarantees that any user ID selected once will always be selected
 again:
 
-    sample = csvsample.hash_sample(lines, 0.1, 'user_id')
+    sampled = csvsample.sample(lines, 'hash', sample_size=0.1, col='user_id')
 
-``csvsample.reservoir_sample(line, sample_size, seed=None)`` performs reservoir
-sampling. Let's say that you have an URL of 100GB csv file. Since you don't
-have enough disk space, you just want to save small portion of sample which is
-representative and unbiased.
+``reservoir`` sampling method performs reservoir sampling. Let's say that you
+have an URL of 100GB csv file. Since you don't have enough disk space, you just
+want to save small portion of sample which is representative and unbiased.
 
 [reservoir sampling](https://en.wikipedia.org/wiki/Reservoir_sampling) method
 allows you to acquire random sample without saving entire data first:
 
-    sample = csvsample.reservoir_sample(lines, 1000)
+    sampled = csvsample.sample(lines, 'reservoir', sample_size=1000)
 
-Now ``sample`` variable contains exactly 1,000 randomly selected lines.
+Now ``sampled`` variable contains exactly 1,000 randomly selected lines.
+
+### Helpers
+
+There are some convenience helpers:
+
+*   ``csvsample.sample_url(url, sampling_method, **kwargs)`` read CSV from given
+    ``url``. You can specify character set encoding via ``encoding`` keyword
+    argument. (default: ``utf-8``)
+
+``csvsample.sample()`` and other helpers return a generator containing sampled
+CSV rows including header row. The generator contains special function
+``to_buf()`` which converts itself into ``io.StringIO`` instance so that you can
+pass the sampled CSV to other libraries such as Pandas:
+
+    import csvsample
+    import pandas as pd
+    
+    sampled = csvsample.sample_url(url, 'random', sample_rate=0.1)
+    df = pd.read_csv(sampled.to_buf())
 
 
 ### Command-line interface
 
-``csvsample`` alos provides command-line interface.
+``csvsample`` also provides command-line interface.
 
 Following URL contains a CSV file from [DataHub](https://datahub.io/):
 

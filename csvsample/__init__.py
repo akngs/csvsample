@@ -1,6 +1,6 @@
 import fire
 
-from .csvsample import CLI, random_sample, hash_sample, reservoir_sample, to_buf
+from .csvsample import CLI, sample, sample_url
 
 
 def main():
